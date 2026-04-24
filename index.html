@@ -298,9 +298,9 @@ td.not-applied-col { color: var(--bad); font-weight: 500; }
 .flow-principle {
   background: var(--surface-2); border-radius: 10px; padding: 12px 14px;
   border-left: 3px solid var(--accent); cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s;
 }
-.flow-principle:hover { background: var(--accent-soft); }
+.flow-principle:hover { background: var(--accent-soft); transform: translateX(2px); }
 .flow-principle .fp-name {
   font-weight: 700; font-size: 13.5px; color: var(--accent);
   margin-bottom: 3px; display: flex; align-items: center; gap: 6px;
@@ -373,6 +373,33 @@ td.not-applied-col { color: var(--bad); font-weight: 500; }
   details.more-examples > summary { display: none; }
   details.more-examples[open] > summary { display: block; }
 }
+/* Principle → Mockup highlight linking */
+.flow-screen [data-p] { transition: all 0.3s ease; position: relative; }
+.flow-screen.has-highlight [data-p]:not(.hl) { opacity: 0.22; filter: grayscale(0.6); }
+.flow-screen [data-p].hl {
+  box-shadow: 0 0 0 2px var(--accent), 0 0 16px rgba(255,56,92,0.45);
+  z-index: 3; border-radius: 8px; animation: pulseRing 1.2s ease-in-out infinite;
+}
+@keyframes pulseRing {
+  0%,100% { box-shadow: 0 0 0 2px var(--accent), 0 0 16px rgba(255,56,92,0.35); }
+  50%     { box-shadow: 0 0 0 3px var(--accent), 0 0 24px rgba(255,56,92,0.6); }
+}
+.flow-principle { user-select: none; }
+.flow-principle.active {
+  background: var(--accent-soft);
+  border-left-width: 5px;
+  transform: translateX(2px);
+}
+.flow-principle.active .fp-name::before {
+  content: '▶ '; color: var(--accent);
+}
+.flow-hint {
+  font-size: 12px; color: var(--text-muted); font-style: italic;
+  margin-top: 10px; padding: 8px 12px;
+  background: var(--surface-2); border-radius: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+
 /* Utility */
 .smalltag {
   display: inline-block; background: var(--accent-soft); color: var(--accent);
@@ -955,7 +982,7 @@ a { color: var(--accent); }
     <!-- ===== CASE STUDY ===== -->
     <section id="case-study">
       <h2>🎯 Principles in Action — Airbnb Booking Flow</h2>
-      <p class="desc">A real-world, best-in-class flow walked screen by screen. Click the dots to navigate, or use the arrow buttons. Each screen shows which principles are working and how.</p>
+      <p class="desc">A real-world, best-in-class flow walked screen by screen. Click the dots to navigate, or use the arrow buttons. <strong>Click a principle card to highlight the UI element on the screen that embodies it.</strong></p>
 
       <div class="flow" id="flow">
         <div class="flow-progress" id="flowProgress"></div>
@@ -1062,70 +1089,70 @@ const screens = [
     subtitle: "The user lands on Airbnb with one goal: find a place to stay.",
     mockup: `
       <div class="fs-header">airbnb.com</div>
-      <div class="fs-title">Where to?</div>
-      <div class="fs-input">🔍 Lisbon, Portugal <span style="color:var(--text-muted)">›</span></div>
-      <div class="fs-pill-row">
+      <div class="fs-title" data-p="align-reality">Where to?</div>
+      <div class="fs-input" data-p="visibility affordance">🔍 Lisbon, Portugal <span style="color:var(--text-muted)">›</span></div>
+      <div class="fs-pill-row" data-p="visibility simplicity">
         <div class="fs-pill active">🏖 Beach</div>
         <div class="fs-pill">🏔 Cabins</div>
         <div class="fs-pill">🎨 Design</div>
         <div class="fs-pill">🏠 Tiny</div>
       </div>
-      <div class="fs-card"><div class="fs-img"></div><div class="fs-line"></div><div class="fs-line short"></div><div class="fs-price">$124/night ★ 4.9</div></div>
-      <div class="fs-card"><div class="fs-img blue"></div><div class="fs-line"></div><div class="fs-line short"></div><div class="fs-price">$89/night ★ 4.7</div></div>
+      <div class="fs-card" data-p="consistency"><div class="fs-img"></div><div class="fs-line"></div><div class="fs-line short"></div><div class="fs-price">$124/night ★ 4.9</div></div>
+      <div class="fs-card" data-p="consistency"><div class="fs-img blue"></div><div class="fs-line"></div><div class="fs-line short"></div><div class="fs-price">$89/night ★ 4.7</div></div>
     `,
     principles: [
-      { name: "Visibility", desc: "Search bar is the largest element; category pills expose the range of inventory without a menu." },
-      { name: "Affordance", desc: "Search bar has a pronounced border, shadow, and the placeholder is a direct question." },
-      { name: "Consistency", desc: "Same listing card template reused on every Airbnb screen." },
-      { name: "Simplicity", desc: "Homepage asks for one thing (a destination). Everything else is deferred." },
-      { name: "Align Reality", desc: "Human vocabulary: 'Where are you going?', 'I'm flexible', 'This weekend'." }
+      { name: "Visibility", desc: "Search bar is the largest element; category pills expose the range of inventory without a menu.", hint: "Search bar + category pills" },
+      { name: "Affordance", desc: "Search bar has a pronounced border, shadow, and the placeholder is a direct question.", hint: "The search input" },
+      { name: "Consistency", desc: "Same listing card template reused on every Airbnb screen.", hint: "The listing cards" },
+      { name: "Simplicity", desc: "Homepage asks for one thing (a destination). Everything else is deferred.", hint: "The category pill row" },
+      { name: "Align Reality", desc: "Human vocabulary: 'Where are you going?', 'I'm flexible', 'This weekend'.", hint: "The 'Where to?' title" }
     ]
   },
   {
     title: "Search Results",
     subtitle: "The user scans options on a map and in a list side by side.",
     mockup: `
-      <div class="fs-header">Lisbon · 283 stays</div>
-      <div class="fs-map">
-        <div class="fs-pin" style="top:20%; left:25%">$124</div>
-        <div class="fs-pin" style="top:45%; left:60%; background:var(--accent)">$89</div>
-        <div class="fs-pin" style="top:65%; left:35%">$210</div>
-        <div class="fs-pin" style="top:30%; left:70%">$150</div>
+      <div class="fs-header" data-p="user-control constraint">Lisbon · 283 stays</div>
+      <div class="fs-map" data-p="visibility mapping">
+        <div class="fs-pin" style="top:20%; left:25%" data-p="mapping">$124</div>
+        <div class="fs-pin" style="top:45%; left:60%; background:var(--accent)" data-p="feedback">$89</div>
+        <div class="fs-pin" style="top:65%; left:35%" data-p="mapping">$210</div>
+        <div class="fs-pin" style="top:30%; left:70%" data-p="mapping">$150</div>
       </div>
-      <div class="fs-card"><div class="fs-img blue" style="height:40px"></div><div class="fs-line"></div><div class="fs-price">$89/night ★ 4.7</div></div>
+      <div class="fs-card" data-p="feedback"><div class="fs-img blue" style="height:40px"></div><div class="fs-line"></div><div class="fs-price">$89/night ★ 4.7</div></div>
       <div class="fs-card"><div class="fs-img" style="height:40px"></div><div class="fs-line"></div><div class="fs-price">$124/night ★ 4.9</div></div>
     `,
     principles: [
-      { name: "Visibility", desc: "Prices on map pins; hovering a card lifts its pin. Geography and catalog visible at once." },
-      { name: "Feedback", desc: "Hovering a listing highlights its pin; every interaction produces an immediate spatial echo." },
-      { name: "Mapping", desc: "Pin position = real-world latitude/longitude. Control and outcome share one coordinate system." },
-      { name: "Constraint", desc: "Filter sliders bound selection to valid values. Impossible combinations never appear." },
-      { name: "User Control", desc: "Toggle list/map/split, sort, wishlist, clear filters — all available at any time." }
+      { name: "Visibility", desc: "Prices on map pins; hovering a card lifts its pin. Geography and catalog visible at once.", hint: "The map with price pins" },
+      { name: "Feedback", desc: "Hovering a listing highlights its pin; every interaction produces an immediate spatial echo.", hint: "The active pink pin and card" },
+      { name: "Mapping", desc: "Pin position = real-world latitude/longitude. Control and outcome share one coordinate system.", hint: "All the pins on the map" },
+      { name: "Constraint", desc: "Filter sliders bound selection to valid values. Impossible combinations never appear.", hint: "The results header filter bar" },
+      { name: "User Control", desc: "Toggle list/map/split, sort, wishlist, clear filters — all available at any time.", hint: "The header with filter controls" }
     ]
   },
   {
     title: "Listing Detail",
     subtitle: "A single property opened; the user evaluates it.",
     mockup: `
-      <div class="fs-header">← Share  ♡</div>
-      <div class="fs-img" style="height:80px; margin-bottom:8px"></div>
-      <div class="fs-title">Sunny Alfama Loft</div>
+      <div class="fs-header" data-p="user-control">← Share  ♡</div>
+      <div class="fs-img" style="height:80px; margin-bottom:8px" data-p="consistency"></div>
+      <div class="fs-title" data-p="align-reality">Sunny Alfama Loft</div>
       <div style="font-size:10px; color:var(--text-muted); margin-bottom:6px">★ 4.92 (234) · Lisbon</div>
-      <div class="fs-card" style="border-color:var(--accent)">
+      <div class="fs-card" style="border-color:var(--accent)" data-p="visibility affordance">
         <div class="fs-price" style="font-size:13px">$124 <span style="font-size:10px; font-weight:400; color:var(--text-muted)">/night</span></div>
         <div style="font-size:10px; margin:4px 0">Apr 26 – May 1 · 2 guests</div>
-        <div class="fs-btn">Reserve</div>
+        <div class="fs-btn" data-p="affordance">Reserve</div>
       </div>
       <div class="fs-line" style="margin-top:8px"></div>
       <div class="fs-line"></div>
       <div class="fs-line short"></div>
     `,
     principles: [
-      { name: "Affordance", desc: "The pink 'Reserve' button is the only primary-colored element — unmistakably the next action." },
-      { name: "Visibility", desc: "Sticky booking panel keeps price, dates, guests, total visible as the user scrolls." },
-      { name: "Consistency", desc: "Every listing has the same anatomy: photos → title → booking panel → amenities → reviews → map." },
-      { name: "Align Reality", desc: "Natural travel language: Host, guests, nights, check-in/check-out, house rules." },
-      { name: "User Control", desc: "Wishlist, share, back — leave, save, or send the listing with one tap each." }
+      { name: "Affordance", desc: "The pink 'Reserve' button is the only primary-colored element — unmistakably the next action.", hint: "The pink Reserve button" },
+      { name: "Visibility", desc: "Sticky booking panel keeps price, dates, guests, total visible as the user scrolls.", hint: "The sticky booking card" },
+      { name: "Consistency", desc: "Every listing has the same anatomy: photos → title → booking panel → amenities → reviews → map.", hint: "The hero image area" },
+      { name: "Align Reality", desc: "Natural travel language: Host, guests, nights, check-in/check-out, house rules.", hint: "The 'Sunny Alfama Loft' title" },
+      { name: "User Control", desc: "Wishlist, share, back — leave, save, or send the listing with one tap each.", hint: "The top header (back, share, ♡)" }
     ]
   },
   {
@@ -1134,22 +1161,22 @@ const screens = [
     mockup: `
       <div class="fs-header">Select dates</div>
       <div style="font-size:10px; margin-bottom:6px; font-weight:600">April 2026</div>
-      <div class="fs-calendar">
-        <div class="fs-day disabled">M</div><div class="fs-day disabled">T</div><div class="fs-day disabled">W</div><div class="fs-day">T</div><div class="fs-day">F</div><div class="fs-day">S</div><div class="fs-day">S</div>
-        <div class="fs-day disabled">13</div><div class="fs-day disabled">14</div><div class="fs-day disabled">15</div><div class="fs-day">16</div><div class="fs-day">17</div><div class="fs-day">18</div><div class="fs-day">19</div>
-        <div class="fs-day">20</div><div class="fs-day">21</div><div class="fs-day">22</div><div class="fs-day">23</div><div class="fs-day">24</div><div class="fs-day">25</div><div class="fs-day edge">26</div>
-        <div class="fs-day in-range">27</div><div class="fs-day in-range">28</div><div class="fs-day in-range">29</div><div class="fs-day in-range">30</div><div class="fs-day edge">1</div><div class="fs-day">2</div><div class="fs-day">3</div>
+      <div class="fs-calendar" data-p="mapping learnability">
+        <div class="fs-day disabled" data-p="constraint">M</div><div class="fs-day disabled" data-p="constraint">T</div><div class="fs-day disabled" data-p="constraint">W</div><div class="fs-day">T</div><div class="fs-day">F</div><div class="fs-day">S</div><div class="fs-day">S</div>
+        <div class="fs-day disabled" data-p="constraint">13</div><div class="fs-day disabled" data-p="constraint">14</div><div class="fs-day disabled" data-p="constraint">15</div><div class="fs-day">16</div><div class="fs-day">17</div><div class="fs-day">18</div><div class="fs-day">19</div>
+        <div class="fs-day">20</div><div class="fs-day">21</div><div class="fs-day">22</div><div class="fs-day">23</div><div class="fs-day">24</div><div class="fs-day">25</div><div class="fs-day edge" data-p="feedback">26</div>
+        <div class="fs-day in-range" data-p="feedback">27</div><div class="fs-day in-range" data-p="feedback">28</div><div class="fs-day in-range" data-p="feedback">29</div><div class="fs-day in-range" data-p="feedback">30</div><div class="fs-day edge" data-p="feedback">1</div><div class="fs-day">2</div><div class="fs-day">3</div>
       </div>
-      <div class="fs-row"><span>$124 × 5 nights</span><span>$620</span></div>
-      <div class="fs-row"><span>Cleaning fee</span><span>$35</span></div>
-      <div class="fs-row total"><span>Total</span><span>$655</span></div>
+      <div class="fs-row" data-p="visibility"><span>$124 × 5 nights</span><span>$620</span></div>
+      <div class="fs-row" data-p="visibility"><span>Cleaning fee</span><span>$35</span></div>
+      <div class="fs-row total" data-p="visibility"><span>Total</span><span>$655</span></div>
     `,
     principles: [
-      { name: "Mapping", desc: "Calendar lays days as a 7-column grid mirroring a real week — like circling on paper." },
-      { name: "Constraint", desc: "Unavailable dates visually disabled; minimum-stay auto-expands to valid range. Invalid states impossible." },
-      { name: "Feedback", desc: "Colored band connects start/end dates; total updates live as the range changes." },
-      { name: "Visibility", desc: "Breakdown: base × nights + cleaning + service + taxes — money flow transparent before paying." },
-      { name: "Learnability", desc: "Near-universal calendar pattern; users arrive already fluent because every travel site uses it." }
+      { name: "Mapping", desc: "Calendar lays days as a 7-column grid mirroring a real week — like circling on paper.", hint: "The 7-column calendar grid" },
+      { name: "Constraint", desc: "Unavailable dates visually disabled; minimum-stay auto-expands to valid range. Invalid states impossible.", hint: "The greyed-out past dates" },
+      { name: "Feedback", desc: "Colored band connects start/end dates; total updates live as the range changes.", hint: "The highlighted date range" },
+      { name: "Visibility", desc: "Breakdown: base × nights + cleaning + service + taxes — money flow transparent before paying.", hint: "The price breakdown rows" },
+      { name: "Learnability", desc: "Near-universal calendar pattern; users arrive already fluent because every travel site uses it.", hint: "The entire calendar widget" }
     ]
   },
   {
@@ -1158,22 +1185,22 @@ const screens = [
     mockup: `
       <div class="fs-header">Review your trip</div>
       <div class="fs-title">Sunny Alfama Loft</div>
-      <div class="fs-card">
+      <div class="fs-card" data-p="visibility user-control">
         <div class="fs-row"><span>Dates</span><span>Apr 26 – May 1</span></div>
         <div class="fs-row"><span>Guests</span><span>2</span></div>
         <div class="fs-row"><span>Host</span><span>Maria</span></div>
         <div class="fs-row total"><span>Total</span><span>$655</span></div>
       </div>
-      <div style="font-size:10px; margin:8px 0">☐ I agree to House Rules</div>
-      <div style="font-size:10px; margin-bottom:8px">☐ I agree to Cancellation policy</div>
-      <div class="fs-btn disabled">Confirm & Pay</div>
+      <div style="font-size:10px; margin:8px 0" data-p="constraint">☐ I agree to House Rules</div>
+      <div style="font-size:10px; margin-bottom:8px" data-p="constraint">☐ I agree to Cancellation policy</div>
+      <div class="fs-btn disabled" data-p="simplicity feedback">Confirm & Pay</div>
     `,
     principles: [
-      { name: "Visibility", desc: "Full summary: dates, guests, host, rules, cancellation policy, line-item total. No hidden surprises." },
-      { name: "Constraint", desc: "House Rules and Cancellation checkboxes required before 'Confirm & Pay' activates." },
-      { name: "Simplicity", desc: "One primary CTA. Edit links beside each section for small changes without restarting." },
-      { name: "User Control", desc: "Every section has an 'Edit' affordance; users adjust without abandoning the flow." },
-      { name: "Feedback", desc: "Confirm button dim until prerequisites met; active color returns when form is valid." }
+      { name: "Visibility", desc: "Full summary: dates, guests, host, rules, cancellation policy, line-item total. No hidden surprises.", hint: "The trip summary card" },
+      { name: "Constraint", desc: "House Rules and Cancellation checkboxes required before 'Confirm & Pay' activates.", hint: "The required checkboxes" },
+      { name: "Simplicity", desc: "One primary CTA. Edit links beside each section for small changes without restarting.", hint: "The single Confirm & Pay button" },
+      { name: "User Control", desc: "Every section has an 'Edit' affordance; users adjust without abandoning the flow.", hint: "The summary card (with Edit links)" },
+      { name: "Feedback", desc: "Confirm button dim until prerequisites met; active color returns when form is valid.", hint: "The disabled Confirm button" }
     ]
   },
   {
@@ -1182,48 +1209,72 @@ const screens = [
     mockup: `
       <div class="fs-header">Payment</div>
       <div class="fs-title">Pay with</div>
-      <div class="fs-input" style="font-size:10px">Card number &nbsp; <span style="font-weight:700">VISA</span></div>
+      <div class="fs-input" style="font-size:10px" data-p="affordance feedback align-reality">Card number &nbsp; <span style="font-weight:700">VISA</span></div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px">
-        <div class="fs-input" style="font-size:10px">MM/YY</div>
-        <div class="fs-input" style="font-size:10px">CVC</div>
+        <div class="fs-input" style="font-size:10px" data-p="constraint align-reality">MM/YY</div>
+        <div class="fs-input" style="font-size:10px" data-p="constraint align-reality">CVC</div>
       </div>
-      <div class="fs-input" style="font-size:10px; margin-top:6px">ZIP</div>
+      <div class="fs-input" style="font-size:10px; margin-top:6px" data-p="align-reality">ZIP</div>
       <div class="fs-row total" style="margin-top:12px"><span>Total</span><span>$655</span></div>
-      <div class="fs-btn" style="margin-top:8px">Confirm & Pay</div>
+      <div class="fs-btn" style="margin-top:8px" data-p="consistency">Confirm & Pay</div>
     `,
     principles: [
-      { name: "Affordance", desc: "Input fields clearly bordered with labels and placeholder format hints. Card icon appears inline." },
-      { name: "Feedback", desc: "Real-time card brand detection — Visa/MC/Amex logo fades in as first digits are typed." },
-      { name: "Constraint", desc: "Expiry dropdown only future months; CVC numeric-only with 3–4 char limit. Typos nearly impossible." },
-      { name: "Consistency", desc: "Identical payment UX across Airbnb flows (booking, gift cards, Experiences)." },
-      { name: "Align Reality", desc: "Standard financial terms: Card number, Expiry, CVC, Billing, ZIP. Same as every physical checkout." }
+      { name: "Affordance", desc: "Input fields clearly bordered with labels and placeholder format hints. Card icon appears inline.", hint: "The card number input" },
+      { name: "Feedback", desc: "Real-time card brand detection — Visa/MC/Amex logo fades in as first digits are typed.", hint: "The VISA logo in the card input" },
+      { name: "Constraint", desc: "Expiry dropdown only future months; CVC numeric-only with 3–4 char limit. Typos nearly impossible.", hint: "The MM/YY and CVC inputs" },
+      { name: "Consistency", desc: "Identical payment UX across Airbnb flows (booking, gift cards, Experiences).", hint: "The Confirm & Pay button" },
+      { name: "Align Reality", desc: "Standard financial terms: Card number, Expiry, CVC, Billing, ZIP. Same as every physical checkout.", hint: "All the input field labels" }
     ]
   },
   {
     title: "Confirmation",
     subtitle: "The booking is done.",
     mockup: `
-      <div class="fs-check">✓</div>
-      <div class="fs-title" style="text-align:center">You're going to Lisbon!</div>
+      <div class="fs-check" data-p="feedback">✓</div>
+      <div class="fs-title" style="text-align:center" data-p="align-reality">You're going to Lisbon!</div>
       <div style="text-align:center; font-size:10px; color:var(--text-muted); margin-bottom:12px">Apr 26 – May 1 · 2 guests</div>
-      <div class="fs-card">
+      <div class="fs-card" data-p="align-reality">
         <div style="font-size:11px; font-weight:600; margin-bottom:4px">Sunny Alfama Loft</div>
         <div style="font-size:10px; color:var(--text-muted)">Host: Maria · Reservation #AB2847</div>
       </div>
-      <div style="font-size:10px; margin-top:8px; color:var(--text-muted)">💡 Message Maria · Add to calendar · See neighborhood guide</div>
-      <div class="fs-btn" style="background:transparent; color:var(--accent); border:1px solid var(--accent); margin-top:10px">View trip</div>
+      <div style="font-size:10px; margin-top:8px; color:var(--text-muted)" data-p="learnability user-control">💡 Message Maria · Add to calendar · See neighborhood guide</div>
+      <div class="fs-btn" style="background:transparent; color:var(--accent); border:1px solid var(--accent); margin-top:10px" data-p="simplicity">View trip</div>
     `,
     principles: [
-      { name: "Feedback", desc: "Large green check with 'You're going to Lisbon!' — unmistakable success. Haptic + micro-animation." },
-      { name: "User Control", desc: "Cancellation policy and 'Cancel reservation' link immediately accessible." },
-      { name: "Align Reality", desc: "Reads like a real travel itinerary: destination, dates, host, address, check-in code." },
-      { name: "Learnability", desc: "Tips panel suggests logical next steps: message host, add to calendar, neighborhood guide." },
-      { name: "Simplicity", desc: "One status (Booked!), one primary next action (View trip). Supplementary info below the fold." }
+      { name: "Feedback", desc: "Large green check with 'You're going to Lisbon!' — unmistakable success. Haptic + micro-animation.", hint: "The big green checkmark" },
+      { name: "User Control", desc: "Cancellation policy and 'Cancel reservation' link immediately accessible.", hint: "The tips / next steps row" },
+      { name: "Align Reality", desc: "Reads like a real travel itinerary: destination, dates, host, address, check-in code.", hint: "The itinerary title and booking card" },
+      { name: "Learnability", desc: "Tips panel suggests logical next steps: message host, add to calendar, neighborhood guide.", hint: "The 💡 tips row" },
+      { name: "Simplicity", desc: "One status (Booked!), one primary next action (View trip). Supplementary info below the fold.", hint: "The single 'View trip' CTA" }
     ]
   }
 ];
 
 let currentScreen = 0;
+let activePrinciple = null;
+
+const slug = (name) => name.toLowerCase().replace(/\s+/g, '-');
+
+function clearHighlight() {
+  activePrinciple = null;
+  const screen = document.getElementById('flowScreen');
+  screen.classList.remove('has-highlight');
+  screen.querySelectorAll('.hl').forEach(el => el.classList.remove('hl'));
+  document.querySelectorAll('.flow-principle').forEach(el => el.classList.remove('active'));
+}
+
+function applyHighlight(principleSlug) {
+  if (activePrinciple === principleSlug) { clearHighlight(); return; }
+  clearHighlight();
+  activePrinciple = principleSlug;
+  const screen = document.getElementById('flowScreen');
+  screen.classList.add('has-highlight');
+  screen.querySelectorAll('[data-p]').forEach(el => {
+    if (el.dataset.p.split(/\s+/).includes(principleSlug)) el.classList.add('hl');
+  });
+  const card = document.querySelector(`.flow-principle[data-slug="${principleSlug}"]`);
+  if (card) card.classList.add('active');
+}
 
 function renderFlow() {
   const s = screens[currentScreen];
@@ -1232,11 +1283,16 @@ function renderFlow() {
   document.getElementById('flowNum').textContent = currentScreen + 1;
   document.getElementById('flowScreen').innerHTML = s.mockup;
   document.getElementById('flowPrinciples').innerHTML = s.principles.map(p => `
-    <li class="flow-principle">
+    <li class="flow-principle" data-slug="${slug(p.name)}">
       <div class="fp-name">● ${p.name}</div>
       <div class="fp-desc">${p.desc}</div>
+      ${p.hint ? `<div class="flow-hint">👉 ${p.hint}</div>` : ''}
     </li>
   `).join('');
+  document.querySelectorAll('.flow-principle').forEach(card => {
+    card.addEventListener('click', () => applyHighlight(card.dataset.slug));
+  });
+  activePrinciple = null;
   document.getElementById('flowPrev').disabled = currentScreen === 0;
   const nextBtn = document.getElementById('flowNext');
   nextBtn.disabled = currentScreen === screens.length - 1;
